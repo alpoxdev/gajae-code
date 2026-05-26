@@ -185,6 +185,22 @@ describe("subagent LSP availability", () => {
 		expect(getOptions()?.enableLsp).toBe(false);
 	});
 
+	it("does not enable MCP discovery for subagents by default", async () => {
+		mockAgents({
+			name: "task",
+			description: "Task agent",
+			systemPrompt: "Use normal tools.",
+			source: "bundled",
+			tools: ["read"],
+		});
+		const { getOptions } = mockCreateAgentSession();
+
+		const tool = await TaskTool.create(createSession());
+		await tool.execute("tool-call", TEST_TASK);
+
+		expect(getOptions()?.enableMCP).toBe(false);
+	});
+
 	it("enables subagent LSP when task.enableLsp is set", async () => {
 		mockAgents({
 			name: "task",

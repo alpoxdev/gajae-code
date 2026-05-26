@@ -75,6 +75,39 @@ describe("createAgentSession MCP discovery prompt gating", () => {
 		}
 	});
 
+	it("does not load project MCP config unless MCP is explicitly enabled", async () => {
+		fs.writeFileSync(
+			path.join(tempDir, ".mcp.json"),
+			JSON.stringify({
+				mcpServers: {
+					local: {
+						command: "definitely-missing-mcp-server",
+					},
+				},
+			}),
+		);
+
+		const { session, mcpManager } = await createAgentSession({
+			cwd: tempDir,
+			agentDir: tempDir,
+			modelRegistry,
+			sessionManager: SessionManager.inMemory(),
+			settings: Settings.isolated({}),
+			model: getBundledModel("openai", "gpt-4o-mini"),
+			disableExtensionDiscovery: true,
+			skills: [],
+			contextFiles: [],
+			promptTemplates: [],
+			slashCommands: [],
+			enableLsp: false,
+			toolNames: ["read"],
+		});
+
+		expect(mcpManager).toBeUndefined();
+		expect(session.getAllToolNames().filter(name => name.startsWith("mcp__"))).toEqual([]);
+		expect(session.getActiveToolNames().filter(name => name.startsWith("mcp__"))).toEqual([]);
+	});
+
 	it("does not advertise MCP discovery when search_tool_bm25 is not active", async () => {
 		const { session } = await createAgentSession({
 			cwd: tempDir,

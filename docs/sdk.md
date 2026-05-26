@@ -65,7 +65,7 @@ If omitted, it resolves:
 - `sessionManager`: `SessionManager.create(cwd)` (file-backed)
 - skills/context files/prompt templates/slash commands/extensions/custom TS commands
 - built-in tools via `createTools(...)`
-- MCP tools (enabled by default)
+- MCP tools when `enableMCP: true` is supplied (opt-in by default)
 - LSP integration (enabled by default)
 - `eventBus`: new `EventBus()` unless supplied
 

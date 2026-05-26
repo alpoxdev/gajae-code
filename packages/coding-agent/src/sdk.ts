@@ -290,7 +290,7 @@ export interface CreateAgentSessionOptions {
 	/** File-based slash commands. Default: discovered from commands/ directories */
 	slashCommands?: FileSlashCommand[];
 
-	/** Enable MCP server discovery from .mcp.json files. Default: true */
+	/** Enable MCP server discovery from .mcp.json files. Default: false (opt-in). */
 	enableMCP?: boolean;
 	/** Existing MCP manager to reuse (skips discovery, propagates to toolSession). */
 	mcpManager?: MCPManager;
@@ -1266,7 +1266,7 @@ export async function createAgentSession(options: CreateAgentSessionOptions = {}
 
 		// Discover MCP tools from .mcp.json files
 		let mcpManager: MCPManager | undefined = options.mcpManager;
-		const enableMCP = options.enableMCP ?? true;
+		const enableMCP = options.enableMCP ?? false;
 		const customTools: CustomTool[] = [];
 		if (enableMCP && !mcpManager) {
 			const mcpResult = await logger.time("discoverAndLoadMCPTools", discoverAndLoadMCPTools, cwd, {

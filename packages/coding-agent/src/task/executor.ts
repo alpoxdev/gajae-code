@@ -1200,7 +1200,9 @@ export async function runSubprocess(options: ExecutorOptions): Promise<SingleRes
 			}
 
 			const mcpProxyTools = options.mcpManager ? createMCPProxyTools(options.mcpManager) : [];
-			const enableMCP = !options.mcpManager;
+			// Subagents inherit MCP through parent-manager proxy tools only; they do not
+			// discover project/user MCP configs on their own by default.
+			const enableMCP = false;
 
 			// Derive subagent-scoped telemetry from the parent's config so the
 			// child loop's spans nest under the parent's active execute_tool span

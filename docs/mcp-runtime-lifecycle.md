@@ -4,7 +4,7 @@ This document describes how MCP servers are discovered, connected, exposed as to
 
 ## Lifecycle at a glance
 
-1. **SDK startup** calls `discoverAndLoadMCPTools()` (unless MCP is disabled).
+1. **SDK startup** calls `discoverAndLoadMCPTools()` only when MCP is explicitly enabled.
 2. **Discovery** (`loadAllMCPConfigs`) resolves MCP server configs from capability sources, filters disabled/project/Exa entries, and preserves source metadata.
 3. **Manager connect phase** (`MCPManager.connectServers`) starts per-server connect + `tools/list` in parallel.
 4. **Fast startup gate** waits up to 250ms, then may return:
@@ -20,7 +20,7 @@ This document describes how MCP servers are discovered, connected, exposed as to
 
 ### Entry path from SDK
 
-`createAgentSession()` in `src/sdk.ts` performs MCP startup when `enableMCP` is true (default):
+`createAgentSession()` in `src/sdk.ts` performs MCP startup only when `enableMCP` is true (opt-in; default false):
 
 - calls `discoverAndLoadMCPTools(cwd, { ... })`,
 - passes `authStorage`, cache storage, and `mcp.enableProjectConfig` setting,
@@ -28,7 +28,7 @@ This document describes how MCP servers are discovered, connected, exposed as to
 - logs per-server load/connect errors,
 - stores returned manager in `toolSession.mcpManager` and session result.
 
-If `enableMCP` is false, MCP discovery is skipped entirely.
+If `enableMCP` is false or omitted, MCP discovery is skipped entirely.
 
 ### Config discovery and filtering
 
